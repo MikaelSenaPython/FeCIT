@@ -9,6 +9,14 @@
     --text: #333;
     --text-light: #f8f9fa;
     --transition: all 0.3s ease;
+
+    /* Novas variáveis para cores do quiz */
+    --quiz-correct-bg: #d4edda; /* Fundo verde claro */
+    --quiz-correct-text: #155724; /* Texto verde escuro */
+    --quiz-correct-border: #28a745; /* Borda verde */
+    --quiz-incorrect-bg: #f8d7da; /* Fundo vermelho claro */
+    --quiz-incorrect-text: #721c24; /* Texto vermelho escuro */
+    --quiz-incorrect-border: #dc3545; /* Borda vermelha */
 }
 
 * {
@@ -55,22 +63,23 @@ header {
     color: var(--success);
 }
 
-.nav-links {
+/* Usando .navbar-links para a lista de navegação, como está no seu HTML atual */
+.navbar-links { /* Corrigido de .nav-links para .navbar-links como no seu HTML */
     display: flex;
-    list-style: none;
+    list-style: none; /* remove os marcadores */
     gap: 1.5rem;
 }
 
-.nav-links a {
+.navbar-links a { /* Corrigido de .nav-links a para .navbar-links a */
     color: var(--text-light);
-    text-decoration: none;
+    text-decoration: none; /* remove o sublinhado */
     font-weight: 500;
     padding: 0.5rem;
     border-radius: 4px;
     transition: var(--transition);
 }
 
-.nav-links a:hover {
+.navbar-links a:hover { /* Corrigido de .nav-links a:hover para .navbar-links a:hover */
     background-color: rgba(255,255,255,0.1);
 }
 
@@ -259,6 +268,11 @@ header {
     border-radius: 10px;
     padding: 2rem;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    /* Removido o min-height direto aqui para que .quiz-container possa gerenciar */
+    /* Adicionado position: relative para que quiz-step absolute funcione corretamente dentro dele */
+    position: relative;
+    /* Adicione um min-height geral se você quiser que todas as abas tenham uma altura mínima */
+    min-height: 680px;
 }
 
 .tab-content.active {
@@ -279,14 +293,28 @@ header {
 .quiz-container {
     max-width: 600px;
     margin: 0 auto;
+    position: relative; /* Já estava aqui */
+    min-height: 380px; /* Aumentado para tentar acomodar as respostas */
 }
 
+/* Modificações para o quiz-step para a animação */
 .quiz-step {
-    display: none;
+    position: absolute; /* Para que as etapas se sobreponham e a animação funcione */
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: none; /* Padrão invisível */
+    opacity: 0; /* Início da opacidade para a animação */
+    transform: translateY(20px); /* Início da posição para a animação */
+    transition: opacity 0.5s ease, transform 0.5s ease; /* Transição suave */
+    padding: 2rem; /* Garante padding quando é absolute, já que o .tab-content tem */
+    box-sizing: border-box; /* Para incluir padding na largura */
 }
 
 .quiz-step.active {
-    display: block;
+    display: block; /* Torna visível */
+    opacity: 1; /* Transiciona para totalmente visível */
+    transform: translateY(0); /* Transiciona para a posição final */
 }
 
 .question {
@@ -319,6 +347,19 @@ header {
     background-color: var(--accent);
     color: white;
     border-color: var(--accent);
+}
+
+/* Classes para cores de acerto e erro no quiz */
+.option.correct {
+    background-color: var(--quiz-correct-bg);
+    color: var(--quiz-correct-text);
+    border-color: var(--quiz-correct-border);
+}
+
+.option.incorrect {
+    background-color: var(--quiz-incorrect-bg);
+    color: var(--quiz-incorrect-text);
+    border-color: var(--quiz-incorrect-border);
 }
 
 .calculator {
@@ -446,73 +487,27 @@ footer {
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .hero h1 {
         font-size: 2.2rem;
     }
-    
+
     .hero p {
         font-size: 1rem;
     }
-    
+
     .section-title h2 {
         font-size: 2rem;
     }
-    
+
     .tabs {
         flex-wrap: wrap;
     }
 }
 
 @media (max-width: 600px) {
-  .card-content p {
-    font-size: 14px;
-    line-height: 1.5;
-  }
-}
-
-.navbar {
-  display: flex;
-  align-items: center;
-  overflow-x: auto;
-  white-space: nowrap;
-  padding: 0 1rem; /* Espaço nas laterais */
-}
-
-.navbar-logo {
-  flex-shrink: 0;
-  margin-right: 1rem; /* Espaço entre a logo e os links */
-}
-
-.navbar a {
-  text-decoration: none; /* remove sublinhado */
-  color: white; /* cor dos links */
-  list-style: none; /* remove marcadores */
-  font-weight: 500;
-}
-
-.navbar a:visited {
-  color: white;
-}
-
-.navbar a:hover {
-  color: #b3e5fc; /* muda a cor no hover se quiser */
-}
-
-.navbar ul {
-  list-style: none;         /* remove os bullets */
-  padding: 0;
-  margin: 0;
-  display: flex;
-  gap: 1rem;                /* espaço entre os links */
-}
-
-.navbar li {
-  list-style: none;         /* reforço */
-}
-
-
-.navbar-links {
-  display: flex;
-  gap: 1rem; /* Espaço entre os links */
+    .card-content p {
+        font-size: 14px;
+        line-height: 1.5;
+    }
 }
