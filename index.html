@@ -129,135 +129,113 @@
 
     <!-- Seção Interativa -->
     <section id="interactive" class="interactive-section">
-        <div class="container">
-            <div class="section-title">
-                <h2>Explore Interativamente</h2>
+    <div class="container">
+        <div class="section-title">
+            <h2>Explore Interativamente</h2>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="graphs">Gráficos</button>
+            <button class="tab-btn" data-tab="quiz">Quiz</button>
+            <button class="tab-btn" data-tab="skills">Habilidades</button>
+            <button class="tab-btn" data-tab="environment-ai">Meio Ambiente</button>
+        </div>
+
+        <div id="graphs" class="tab-content active">
+            <h3>Impacto da IA no Mercado de Trabalho</h3>
+            <div class="chart-container">
+                <canvas id="automationChart"></canvas>
             </div>
-            
-            <div class="tabs">
-                <button class="tab-btn active" data-tab="graphs">Gráficos</button>
-                <button class="tab-btn" data-tab="quiz">Quiz</button>
-                <button class="tab-btn" data-tab="calculator">Calculadora</button>
+
+            <h3>Consumo de Energia na IA</h3>
+            <div class="chart-container">
+                <canvas id="energyChart"></canvas>
             </div>
-            
-            <!-- Gráficos -->
-            <div id="graphs" class="tab-content active">
-                <h3>Impacto da IA no Mercado de Trabalho</h3>
-                <div class="chart-container">
-                    <canvas id="automationChart"></canvas>
-                </div>
-                
-                <h3>Consumo de Energia na IA</h3>
-                <div class="chart-container">
-                    <canvas id="energyChart"></canvas>
-                </div>
-            </div>
-            
-            <!-- Quiz -->
-            <div id="quiz" class="tab-content">
-                <div class="quiz-container">
-                    <div class="quiz-step active" id="step1">
-                        <div class="question">1. Qual destas áreas NÃO é um benefício significativo da IA para o meio ambiente?</div>
-                        <div class="options">
-                            <div class="option" data-correct="false">Otimização de redes de energia</div>
-                            <div class="option" data-correct="false">Monitoramento de espécies ameaçadas</div>
-                            <div class="option" data-correct="true">Redução do lixo eletrônico</div>
-                            <div class="option" data-correct="false">Agricultura de precisão</div>
-                        </div>
-                    </div>
-                    
-                    <div class="quiz-step" id="step2">
-                        <div class="question">2. Qual porcentagem de tarefas administrativas pode ser automatizada por IA?</div>
-                        <div class="options">
-                            <div class="option" data-correct="false">25-40%</div>
-                            <div class="option" data-correct="true">40-60%</div>
-                            <div class="option" data-correct="false">60-80%</div>
-                            <div class="option" data-correct="false">Mais de 80%</div>
-                        </div>            
-                    </div>
-                    
-                    <div class="quiz-step" id="step3">
-                        <div class="question">3. Qual destas habilidades será MAIS valorizada na era da IA?</div>
-                        <div class="options">
-                            <div class="option" data-correct="false">Digitação rápida</div>
-                            <div class="option" data-correct="false">Cálculo manual</div>
-                            <div class="option" data-correct="true">Pensamento crítico</div>
-                            <div class="option" data-correct="false">Memorização de informações</div>
-                        </div>                    
-                    </div>
-                    
-                    <div class="quiz-step" id="results">
-                        <h3>Resultado do Quiz</h3>
-                        <p>Você acertou <span id="score">0</span> de 3 perguntas!</p>
-                        <div id="quizFeedback"></div>
-                        <button class="btn" onclick="resetQuiz()">Tentar Novamente</button>
+        </div>
+
+        <div id="quiz" class="tab-content">
+            <div class="quiz-container">
+                <div class="quiz-step active" id="step1">
+                    <div class="question">1. Qual destas áreas NÃO é um benefício significativo da IA para o meio ambiente?</div>
+                    <div class="options">
+                        <div class="option" data-correct="false">Otimização de redes de energia</div>
+                        <div class="option" data-correct="false">Monitoramento de espécies ameaçadas</div>
+                        <div class="option" data-correct="true">Redução do lixo eletrônico</div>
+                        <div class="option" data-correct="false">Agricultura de precisão</div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Calculadora de Pegada de Carbono -->
-            <div id="calculator" class="tab-content">
-                <div class="calculator">
-                    <h3>Calculadora de Pegada de Carbono em IA</h3>
-                    <p>Esta calculadora estima o impacto ambiental de modelos de IA baseados em seus parâmetros de treinamento.</p>
-                    
-                    <div class="form-group">
-                        <label for="model-size">Tamanho do Modelo (parâmetros):</label>
-                        <select id="model-size">
-                            <option value="small">Pequeno (até 100 milhões)</option>
-                            <option value="medium" selected>Médio (100m-1 bilhão)</option>
-                            <option value="large">Grande (1-10 bilhões)</option>
-                            <option value="xlarge">Muito Grande (10+ bilhões)</option>
-                        </select>
+
+                <div class="quiz-step" id="step2">
+                    <div class="question">2. Qual porcentagem de tarefas administrativas pode ser automatizada por IA?</div>
+                    <div class="options">
+                        <div class="option" data-correct="false">25-40%</div>
+                        <div class="option" data-correct="true">40-60%</div>
+                        <div class="option" data-correct="false">60-80%</div>
+                        <div class="option" data-correct="false">Mais de 80%</div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="training-time">Tempo de Treinamento (dias):</label>
-                        <input type="number" id="training-time" min="1" max="365" value="7">
+                </div>
+
+                <div class="quiz-step" id="step3">
+                    <div class="question">3. Qual destas habilidades será MAIS valorizada na era da IA?</div>
+                    <div class="options">
+                        <div class="option" data-correct="false">Digitação rápida</div>
+                        <div class="option" data-correct="false">Cálculo manual</div>
+                        <div class="option" data-correct="true">Pensamento crítico</div>
+                        <div class="option" data-correct="false">Memorização de informações</div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="hardware">Hardware Utilizado:</label>
-                        <select id="hardware">
-                            <option value="cpu">CPUs Padrão</option>
-                            <option value="gpu" selected>GPUs Especializadas</option>
-                            <option value="tpu">TPUs (Tensor Processing Units)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="energy-source">Fonte de Energia:</label>
-                        <select id="energy-source">
-                            <option value="fossil">Combustíveis Fósseis</option>
-                            <option value="mixed" selected>Mista</option>
-                            <option value="renewable">Renovável</option>
-                        </select>
-                    </div>
-                    
-                    <button class="btn" onclick="calculateFootprint()">Calcular Pegada</button>
-                    
-                    <div class="result" id="result">
-                        <h3>Sua Pegada de Carbono Estimada</h3>
-                        <p>O modelo de IA geraria aproximadamente:</p>
-                        <h2 id="co2-amount">0 toneladas</h2>
-                        <p>de CO2 equivalente</p>
-                        
-                        <div class="progress-bar">
-                            <div class="progress" id="progress-bar"></div>
-                        </div>
-                        <p id="comparison">Isso equivale a 0 carros na estrada por um ano</p>
-                        
-                        <h4>Sugestões para Reduzir o Impacto:</h4>
-                        <ul id="suggestions">
-                            <li>Otimize arquiteturas de modelos</li>
-                            <li>Use hardware eficiente</li>
-                            <li>Priorize data centers com energia renovável</li>
-                        </ul>
-                    </div>
+                </div>
+
+                <div class="quiz-step" id="results">
+                    <h3>Resultado do Quiz</h3>
+                    <p>Você acertou <span id="score">0</span> de 3 perguntas!</p>
+                    <div id="quizFeedback"></div>
+                    <button class="btn" onclick="resetQuiz()">Tentar Novamente</button>
                 </div>
             </div>
         </div>
-    </section>
+
+        <div id="skills" class="tab-content">
+            <h3>Simulador de Habilidades do Futuro com IA</h3>
+            <p>Descubra como diferentes habilidades são valorizadas na era da Inteligência Artificial.</p>
+            <div class="form-group">
+                <label for="skill-input">Digite uma habilidade:</label>
+                <input type="text" id="skill-input" placeholder="Ex: Criatividade, Programação, Comunicação">
+            </div>
+            <button class="btn" onclick="analyzeSkill()">Analisar Habilidade</button>
+            <div id="skill-result" class="result" style="display: block; margin-top: 1.5rem; text-align: left;">
+                <p>Nenhuma habilidade analisada ainda.</p>
+            </div>
+        </div>
+
+        <div id="environment-ai" class="tab-content">
+            <h3>IA a Serviço do Meio Ambiente</h3>
+            <p>Explore como a Inteligência Artificial pode ser uma aliada poderosa na sustentabilidade.</p>
+            <div class="cards" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                <div class="card env-card" data-env-type="agricultura">
+                    <h4>Agricultura de Precisão</h4>
+                    <p>Otimização do uso de água e fertilizantes, monitoramento de pragas e doenças.</p>
+                </div>
+                <div class="card env-card" data-env-type="cidades">
+                    <h4>Cidades Inteligentes</h4>
+                    <p>Gestão de tráfego, otimização de energia em edifícios, coleta de lixo inteligente.</p>
+                </div>
+                <div class="card env-card" data-env-type="desastres">
+                    <h4>Prevenção de Desastres</h4>
+                    <p>Previsão de eventos climáticos extremos, monitoramento de florestas e incêndios.</p>
+                </div>
+                <div class="card env-card" data-env-type="energia">
+                    <h4>Energias Renováveis</h4>
+                    <p>Otimização da produção e distribuição de energia solar e eólica.</p>
+                </div>
+            </div>
+            <div id="env-ai-result" class="result" style="display: block; margin-top: 1.5rem; text-align: left;">
+                <p>Clique em uma área para saber como a IA ajuda!</p>
+            </div>
+        </div>
+
+        
+    </div>
+</section>
 
     <!-- Preparação para o Futuro -->
     <section id="future" class="container">

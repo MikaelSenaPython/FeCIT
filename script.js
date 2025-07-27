@@ -102,6 +102,27 @@ tabBtns.forEach(btn => {
         // Mostrar o conteúdo correspondente
         const tabId = btn.getAttribute('data-tab');
         document.getElementById(tabId).classList.add('active');
+
+        // Resetar quiz ao mudar de aba, se o quiz não for o ativo
+        if (tabId !== 'quiz') {
+            resetQuiz(); // Garante que o quiz está sempre no estado inicial ao sair
+        }
+
+        // NOVO: Ajustar min-height de todas as abas para 'auto' por padrão
+        // Isso permite que o CSS principal gerencie a altura da maioria das abas
+        tabContents.forEach(content => {
+            content.style.minHeight = 'auto';
+        });
+
+        // NOVO: Exceção para a aba 'quiz' se ela precisar de um min-height específico para as perguntas
+        // Se o CSS do .tab-content e .quiz-container estiver com min-height: auto, esta linha pode não ser necessária,
+        // mas pode ser útil se as perguntas tiverem uma altura total muito maior que os resultados.
+        if (tabId === 'quiz') {
+            // Este min-height deve ser ajustado para acomodar a pergunta mais longa do quiz
+            // Experimente valores como '580px', '600px' ou 'auto' se o CSS estiver ajustando bem.
+            // Se o CSS do .tab-content já tiver um min-height adequado, pode remover esta linha.
+            document.getElementById('quiz').style.minHeight = '580px';
+        }
     });
 });
 
@@ -173,7 +194,6 @@ function nextQuestion() {
         addOptionClickListeners(nextStepElement); // Adiciona listeners para as opções da nova pergunta
     } else {
         // Não deveria chegar aqui se o handleOptionClick já gerencia a chamada para showResults na última pergunta
-        // Mas como fallback, pode chamar showResults() aqui também.
         showResults();
     }
 }
@@ -181,8 +201,6 @@ function nextQuestion() {
 function showResults() {
     // Calcular pontuação
     score = 0;
-    // Pega todas as opções que foram marcadas como corretas em TODAS as perguntas para o score final
-    // Nota: A lógica de pontuação é feita no showResults, não no handleOptionClick
     const allQuizSteps = document.querySelectorAll('.quiz-step');
     allQuizSteps.forEach(step => {
         step.querySelectorAll('.option.selected').forEach(option => {
@@ -196,7 +214,7 @@ function showResults() {
 
     // Feedback baseado na pontuação
     let feedback = '';
-    if (score === 3) { // Se houver 3 perguntas, 3 acertos é o máximo
+    if (score === 3) {
         feedback = '<p>Parabéns! Você domina os conceitos fundamentais sobre IA.</p>';
     } else if (score === 2) {
         feedback = '<p>Bom trabalho! Você tem um bom entendimento sobre IA.</p>';
@@ -209,12 +227,22 @@ function showResults() {
     document.getElementById('quizFeedback').innerHTML = feedback;
 
     // Esconde a última pergunta (se ainda estiver ativa) e mostra os resultados
-    // Certifique-se de que a última pergunta foi desativada antes de mostrar os resultados
     const lastQuestionElement = document.getElementById('step' + (currentQuestion));
     if (lastQuestionElement) {
         lastQuestionElement.classList.remove('active');
     }
     document.getElementById('results').classList.add('active');
+
+    // NOVO: Ajustar a altura do quiz-container e tab-content para se adaptar aos resultados (min-height: auto)
+    // Isso é crucial para que a caixa branca diminua
+    const quizContainer = document.querySelector('.quiz-container');
+    if (quizContainer) {
+        quizContainer.style.minHeight = 'auto'; // Deixa o min-height automático
+    }
+    const tabContentQuiz = document.getElementById('quiz');
+    if (tabContentQuiz) {
+        tabContentQuiz.style.minHeight = 'auto'; // Deixa o min-height automático
+    }
 }
 
 function resetQuiz() {
@@ -232,80 +260,142 @@ function resetQuiz() {
     document.getElementById('results').classList.remove('active');
     document.getElementById('step1').classList.add('active');
     addOptionClickListeners(document.getElementById('step1')); // Garante que a primeira pergunta tenha listeners
+
+    // NOVO: Resetar min-height para 'auto' ao reiniciar o quiz, para que as perguntas se ajustem naturalmente
+    const quizContainer = document.querySelector('.quiz-container');
+    if (quizContainer) {
+        quizContainer.style.minHeight = 'auto';
+    }
+    const tabContentQuiz = document.getElementById('quiz');
+    if (tabContentQuiz) {
+        // Defina um min-height inicial adequado para as perguntas, ou 'auto' se o CSS for suficiente
+        tabContentQuiz.style.minHeight = '580px'; // Volte para a altura que funcionou para as perguntas ou 'auto'
+    }
 }
 
 // Chama para a primeira pergunta carregar os listeners ao carregar a página
 document.addEventListener('DOMContentLoaded', () => {
-    // Adiciona listeners apenas à primeira pergunta no carregamento inicial
     addOptionClickListeners(document.getElementById('step1'));
 });
 
 
-// Calculadora de Pegada de Carbono
-function calculateFootprint() {
-    const modelSize = document.getElementById('model-size').value;
-    const trainingTime = parseInt(document.getElementById('training-time').value);
-    const hardware = document.getElementById('hardware').value;
-    const energySource = document.getElementById('energy-source').value;
+// --------------------------------------------------------------------------------------
+// NOVAS FUNÇÕES PARA O SIMULADOR DE HABILIDADES E IA + MEIO AMBIENTE
+// --------------------------------------------------------------------------------------
 
-    // Fatores de cálculo (ajustados para simulação)
-    let sizeFactor = 0;
-    switch(modelSize) {
-        case 'small': sizeFactor = 1; break;
-        case 'medium': sizeFactor = 10; break;
-        case 'large': sizeFactor = 50; break;
-        case 'xlarge': sizeFactor = 200; break;
+// Dados para o Simulador de Habilidades
+const skillsData = {
+    "programação": {
+        level: "Essencial",
+        description: "A programação é fundamental para desenvolver, otimizar e aplicar soluções de IA. Profissionais com essa habilidade serão altamente demandados para construir o futuro."
+    },
+    "pensamento crítico": {
+        level: "Altamente Valorizado",
+        description: "A capacidade de analisar informações, questionar suposições e resolver problemas complexos é crucial, pois a IA não substitui o raciocínio humano aprofundado."
+    },
+    "criatividade": {
+        level: "Indispensável",
+        description: "A IA pode gerar ideias, mas a criatividade humana para inovar, criar conceitos e pensar fora da caixa continua sendo única e de alto valor em qualquer setor."
+    },
+    "comunicação": {
+        level: "Crescente Importância",
+        description: "Saber comunicar ideias complexas, colaborar com equipes e interagir com clientes é vital, especialmente em um mundo onde a interação humano-máquina se intensifica."
+    },
+    "inteligência emocional": {
+        level: "Crucial",
+        description: "Habilidades como empatia, autoconsciência e gestão de relacionamentos são exclusivas dos humanos e se tornam ainda mais valorizadas em funções de liderança e interação social."
+    },
+    "resolução de problemas": {
+        level: "Essencial",
+        description: "A IA ajuda na análise, mas a habilidade de identificar problemas, formular soluções e implementá-las de forma eficaz continua sendo um pilar para o futuro do trabalho."
+    },
+    "alfabetização em dados": {
+        level: "Fundamental",
+        description: "Compreender, interpretar e usar dados é cada vez mais importante para interagir efetivamente com sistemas de IA e tomar decisões informadas."
+    },
+    "adaptabilidade": {
+        level: "Vital",
+        description: "A capacidade de aprender e se adaptar rapidamente a novas ferramentas e tecnologias é crucial em um cenário de constantes mudanças impulsionadas pela IA."
     }
+};
 
-    let hardwareFactor = 1; // Base: GPU
-    switch(hardware) {
-        case 'cpu': hardwareFactor = 1.5; break; // CPUs geralmente menos eficientes que GPUs para ML
-        case 'gpu': hardwareFactor = 1; break;
-        case 'tpu': hardwareFactor = 0.7; break; // TPUs mais eficientes
+function analyzeSkill() {
+    const skillInput = document.getElementById('skill-input');
+    const skillResultDiv = document.getElementById('skill-result');
+    const skillName = skillInput.value.trim().toLowerCase(); // Normaliza a entrada
+
+    let resultHtml = '';
+
+    if (skillsData[skillName]) {
+        const data = skillsData[skillName];
+        resultHtml = `
+            <h4>Habilidade: ${skillName.charAt(0).toUpperCase() + skillName.slice(1)}</h4>
+            <p><strong>Nível de Valorização na Era da IA:</strong> ${data.level}</p>
+            <p>${data.description}</p>
+        `;
+    } else if (skillName === "") {
+        resultHtml = '<p>Por favor, digite uma habilidade para analisar.</p>';
     }
-
-    let energyFactor = 1; // Base: Energia mista
-    switch(energySource) {
-        case 'fossil': energyFactor = 1.5; break; // Mais CO2
-        case 'mixed': energyFactor = 1; break;
-        case 'renewable': energyFactor = 0.3; break; // Menos CO2
+    else {
+        resultHtml = `
+            <p>Não encontramos informações específicas para "${skillName}".</p>
+            <p>Considere que habilidades como <strong>Pensamento Crítico</strong>, <strong>Criatividade</strong> e <strong>Inteligência Emocional</strong> são universalmente valorizadas, complementando as capacidades da IA.</p>
+        `;
     }
-
-    // Cálculo da pegada de carbono (valores arbitrários para demonstração)
-    const co2Tons = Math.round((sizeFactor * trainingTime * hardwareFactor * energyFactor) * 10) / 10;
-
-    // Atualizar a UI com o resultado
-    document.getElementById('co2-amount').textContent = co2Tons + " toneladas";
-
-    // Barra de progresso (escala para visualização)
-    const maxCO2 = 300; // Define um valor máximo para a barra de progresso
-    const progressPercent = Math.min(100, (co2Tons / maxCO2) * 100);
-    document.getElementById('progress-bar').style.width = progressPercent + '%';
-
-    // Comparação com carros (média de 4.6 toneladas de CO2/ano por carro nos EUA)
-    const carsEquivalent = Math.round(co2Tons / 4.6);
-    document.getElementById('comparison').textContent =
-        `Isso equivale a aproximadamente ${carsEquivalent} carros na estrada por um ano`;
-
-    // Sugestões para reduzir o impacto
-    let suggestionsList = '';
-    if (co2Tons > 50) {
-        suggestionsList += '<li>Considere reduzir o tamanho do modelo ou otimizar sua arquitetura.</li>';
-        suggestionsList += '<li>Otimize o tempo de treinamento utilizando técnicas de parada antecipada.</li>';
-    }
-    if (energySource !== 'renewable') {
-        suggestionsList += '<li>Priorize o uso de data centers que utilizam fontes de energia renovável.</li>';
-    }
-    if (hardware === 'cpu' || hardware === 'gpu') {
-        suggestionsList += '<li>Considere usar hardware especializado (TPUs) para maior eficiência energética, se disponível.</li>';
-    }
-    suggestionsList += '<li>Explore técnicas de compressão de modelos (model pruning, quantization) para reduzir o custo de inferência.</li>';
-
-    document.getElementById('suggestions').innerHTML = `<ul>${suggestionsList}</ul>`;
-
-    // Mostrar resultado
-    document.getElementById('result').style.display = 'block';
+    skillResultDiv.innerHTML = resultHtml;
+    skillResultDiv.style.display = 'block'; // Garante que o resultado seja exibido
 }
+
+// Dados para "IA a Serviço do Meio Ambiente"
+const envAIData = {
+    "agricultura": {
+        title: "Agricultura de Precisão",
+        description: "A IA otimiza o uso de água, fertilizantes e pesticidas através da análise de dados de sensores e drones. Isso reduz o desperdício, melhora a produtividade das colheitas e minimiza o impacto ambiental da agricultura."
+    },
+    "cidades": {
+        title: "Cidades Inteligentes",
+        description: "Sistemas de IA podem otimizar o fluxo de tráfego para reduzir congestionamentos e emissões, gerenciar o consumo de energia em edifícios, e roteirizar a coleta de lixo de forma mais eficiente, tornando as cidades mais sustentáveis."
+    },
+    "desastres": {
+        title: "Prevenção e Gestão de Desastres",
+        description: "Algoritmos de IA analisam grandes volumes de dados climáticos e geográficos para prever desastres naturais como inundações e incêndios florestais. Também ajudam na gestão de recursos durante e após esses eventos."
+    },
+    "energia": {
+        title: "Otimização de Energias Renováveis",
+        description: "A IA pode prever a demanda de energia e a produção de fontes renováveis (solar, eólica), otimizando a distribuição na rede elétrica e minimizando o desperdício de energia. Isso acelera a transição para uma matriz energética limpa."
+    }
+};
+
+function displayEnvAIInfo(envType) {
+    const envAiResultDiv = document.getElementById('env-ai-result');
+    let resultHtml = '';
+
+    if (envAIData[envType]) {
+        const data = envAIData[envType];
+        resultHtml = `
+            <h4>${data.title}</h4>
+            <p>${data.description}</p>
+        `;
+    } else {
+        resultHtml = '<p>Selecione uma área para ver os detalhes.</p>';
+    }
+    envAiResultDiv.innerHTML = resultHtml;
+    envAiResultDiv.style.display = 'block';
+}
+
+// Adicionar listeners para os cards de IA e Meio Ambiente
+document.addEventListener('DOMContentLoaded', function() {
+    const envCards = document.querySelectorAll('.env-card');
+    envCards.forEach(card => {
+        card.addEventListener('click', function() {
+            // Remover a classe 'active' de todos os cards
+            envCards.forEach(c => c.classList.remove('active'));
+            // Adicionar a classe 'active' ao card clicado
+            this.classList.add('active');
+            displayEnvAIInfo(this.getAttribute('data-env-type'));
+        });
+    });
+});
 
 // Scroll suave para âncoras
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
