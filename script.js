@@ -1,90 +1,35 @@
-// Inicialização dos gráficos
-document.addEventListener('DOMContentLoaded', function() {
-    // Gráfico de automação de empregos
-    const automationCtx = document.getElementById('automationChart').getContext('2d');
-    new Chart(automationCtx, {
-        type: 'bar',
-        data: {
-            labels: ['Administrativo', 'Manufatura', 'Varejo', 'Transporte', 'Saúde', 'Educação', 'TI'],
-            datasets: [{
-                label: '% de Tarefas Automatizáveis',
-                data: [55, 45, 38, 30, 20, 15, 40],
-                backgroundColor: [
-                    'rgba(67, 97, 238, 0.7)',
-                    'rgba(67, 97, 238, 0.7)',
-                    'rgba(67, 97, 238, 0.7)',
-                    'rgba(67, 97, 238, 0.7)',
-                    'rgba(72, 149, 239, 0.7)',
-                    'rgba(72, 149, 239, 0.7)',
-                    'rgba(76, 201, 240, 0.7)'
-                ],
-                borderColor: [
-                    'rgba(67, 97, 238, 1)',
-                    'rgba(67, 97, 238, 1)',
-                    'rgba(67, 97, 238, 1)',
-                    'rgba(67, 97, 238, 1)',
-                    'rgba(72, 149, 239, 1)',
-                    'rgba(72, 149, 239, 1)',
-                    'rgba(76, 201, 240, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    title: {
-                        display: true,
-                        text: 'Porcentagem'
-                    }
-                }
-            }
-        }
-    });
+// NOVO: Lógica para esconder/mostrar o header ao rolar com threshold no topo
+let lastScrollY = window.scrollY; // Variável para armazenar a última posição de rolagem
+const header = document.querySelector('header'); // Pega o header uma vez
+const topThreshold = 200; // Define o limiar em pixels para perto do topo
 
-    // Gráfico de consumo de energia
-    const energyCtx = document.getElementById('energyChart').getContext('2d');
-    new Chart(energyCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Treinamento', 'Inferência', 'Armazenamento', 'Refrigeração'],
-            datasets: [{
-                label: 'Consumo de Energia',
-                data: [45, 35, 10, 10],
-                backgroundColor: [
-                    'rgba(247, 37, 133, 0.7)',
-                    'rgba(67, 97, 238, 0.7)',
-                    'rgba(72, 149, 239, 0.7)',
-                    'rgba(76, 201, 240, 0.7)'
-                ],
-                borderColor: [
-                    'rgba(247, 37, 133, 1)',
-                    'rgba(67, 97, 238, 1)',
-                    'rgba(72, 149, 239, 1)',
-                    'rgba(76, 201, 240, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'right',
-                },
-                title: {
-                    display: true,
-                    text: 'Distribuição do Consumo de Energia em Sistemas de IA'
-                }
-            }
+window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+
+    if (currentScrollY > lastScrollY) {
+        // Rolando para baixo: Sempre esconde se já desceu o suficiente.
+        if (currentScrollY > topThreshold) {
+            header.classList.add('header-hidden');
         }
-    });
+    } else {
+        // Rolando para cima:
+        // A navbar só aparece se estiver perto do topo (dentro do topThreshold)
+        if (currentScrollY <= topThreshold) {
+            header.classList.remove('header-hidden');
+        } else {
+            // Se rolando para cima, mas ainda longe do topo (fora do topThreshold), mantém escondida
+            header.classList.add('header-hidden');
+        }
+    }
+
+    // Caso especial: Sempre mostrar se estiver exatamente no topo da página
+    if (currentScrollY === 0) {
+        header.classList.remove('header-hidden');
+    }
+
+    lastScrollY = currentScrollY; // Atualiza a última posição de rolagem
 });
+
 
 // Funcionalidade das abas
 const tabBtns = document.querySelectorAll('.tab-btn');
@@ -108,20 +53,14 @@ tabBtns.forEach(btn => {
             resetQuiz(); // Garante que o quiz está sempre no estado inicial ao sair
         }
 
-        // NOVO: Ajustar min-height de todas as abas para 'auto' por padrão
-        // Isso permite que o CSS principal gerencie a altura da maioria das abas
+        // Ajustar min-height de todas as abas para 'auto' por padrão
         tabContents.forEach(content => {
             content.style.minHeight = 'auto';
         });
 
-        // NOVO: Exceção para a aba 'quiz' se ela precisar de um min-height específico para as perguntas
-        // Se o CSS do .tab-content e .quiz-container estiver com min-height: auto, esta linha pode não ser necessária,
-        // mas pode ser útil se as perguntas tiverem uma altura total muito maior que os resultados.
+        // Exceção para a aba 'quiz' se ela precisar de um min-height específico para as perguntas
         if (tabId === 'quiz') {
-            // Este min-height deve ser ajustado para acomodar a pergunta mais longa do quiz
-            // Experimente valores como '580px', '600px' ou 'auto' se o CSS estiver ajustando bem.
-            // Se o CSS do .tab-content já tiver um min-height adequado, pode remover esta linha.
-            document.getElementById('quiz').style.minHeight = '580px';
+            document.getElementById('quiz').style.minHeight = '580px'; // Altura ideal para o quiz
         }
     });
 });
@@ -134,53 +73,45 @@ let score = 0;
 function addOptionClickListeners(stepElement) {
     const options = stepElement.querySelectorAll('.option');
     options.forEach(option => {
-        // Remove listeners antigos para evitar duplicação se a função for chamada novamente
-        option.removeEventListener('click', handleOptionClick); // Remove o listener anterior
-        option.addEventListener('click', handleOptionClick); // Adiciona o novo listener
+        option.removeEventListener('click', handleOptionClick);
+        option.addEventListener('click', handleOptionClick);
     });
 }
 
 // Handler para o clique em uma opção do quiz
 function handleOptionClick() {
-    const currentStep = this.closest('.quiz-step'); // Encontra o pai .quiz-step
+    const currentStep = this.closest('.quiz-step');
     const optionsInCurrentStep = currentStep.querySelectorAll('.option');
 
-    // Desabilitar cliques adicionais na pergunta atual
     optionsInCurrentStep.forEach(opt => {
-        opt.style.pointerEvents = 'none'; // Desabilita cliques após a primeira escolha
-        opt.classList.remove('selected', 'correct', 'incorrect'); // Limpa seleções e cores anteriores
+        opt.style.pointerEvents = 'none';
+        opt.classList.remove('selected', 'correct', 'incorrect');
     });
 
-    // Selecionar a opção clicada
     this.classList.add('selected');
 
-    // Verificar se está correta
     const isCorrect = this.getAttribute('data-correct') === 'true';
     if (isCorrect) {
-        this.classList.add('correct'); // Adiciona a classe verde
+        this.classList.add('correct');
     } else {
-        this.classList.add('incorrect'); // Adiciona a classe vermelha
+        this.classList.add('incorrect');
     }
 
-    // Atraso para ver o feedback visual antes de avançar para a próxima pergunta
     setTimeout(() => {
-        // Reabilitar cliques antes de avançar, caso a próxima pergunta utilize a mesma lógica
         optionsInCurrentStep.forEach(opt => opt.style.pointerEvents = 'auto');
 
-        // Se esta é a última pergunta antes dos resultados, chame showResults()
-        if (currentQuestion === 3) { // Ajuste 3 para o número total de perguntas se for diferente
+        if (currentQuestion === 3) {
             showResults();
         } else {
             nextQuestion();
         }
-    }, 1500); // 1.5 segundos de atraso
+    }, 1500);
 }
 
 function nextQuestion() {
     const currentStepElement = document.getElementById('step' + currentQuestion);
     if (currentStepElement) {
         currentStepElement.classList.remove('active');
-        // Remover classes de seleção e cor ao sair da pergunta
         currentStepElement.querySelectorAll('.option').forEach(opt => {
             opt.classList.remove('selected', 'correct', 'incorrect');
         });
@@ -190,16 +121,14 @@ function nextQuestion() {
     const nextStepElement = document.getElementById('step' + currentQuestion);
 
     if (nextStepElement) {
-        nextStepElement.classList.add('active'); // Adiciona active para mostrar e acionar a animação
-        addOptionClickListeners(nextStepElement); // Adiciona listeners para as opções da nova pergunta
+        nextStepElement.classList.add('active');
+        addOptionClickListeners(nextStepElement);
     } else {
-        // Não deveria chegar aqui se o handleOptionClick já gerencia a chamada para showResults na última pergunta
         showResults();
     }
 }
 
 function showResults() {
-    // Calcular pontuação
     score = 0;
     const allQuizSteps = document.querySelectorAll('.quiz-step');
     allQuizSteps.forEach(step => {
@@ -212,7 +141,6 @@ function showResults() {
 
     document.getElementById('score').textContent = score;
 
-    // Feedback baseado na pontuação
     let feedback = '';
     if (score === 3) {
         feedback = '<p>Parabéns! Você domina os conceitos fundamentais sobre IA.</p>';
@@ -226,61 +154,52 @@ function showResults() {
 
     document.getElementById('quizFeedback').innerHTML = feedback;
 
-    // Esconde a última pergunta (se ainda estiver ativa) e mostra os resultados
     const lastQuestionElement = document.getElementById('step' + (currentQuestion));
     if (lastQuestionElement) {
         lastQuestionElement.classList.remove('active');
     }
     document.getElementById('results').classList.add('active');
 
-    // NOVO: Ajustar a altura do quiz-container e tab-content para se adaptar aos resultados (min-height: auto)
-    // Isso é crucial para que a caixa branca diminua
-    const quizContainer = document.querySelector('.quiz-container');
-    if (quizContainer) {
-        quizContainer.style.minHeight = 'auto'; // Deixa o min-height automático
-    }
-    const tabContentQuiz = document.getElementById('quiz');
-    if (tabContentQuiz) {
-        tabContentQuiz.style.minHeight = 'auto'; // Deixa o min-height automático
-    }
-}
-
-function resetQuiz() {
-    // Resetar estado
-    currentQuestion = 1;
-    score = 0;
-
-    // Limpar seleções e cores de TODAS as opções em TODAS as etapas
-    document.querySelectorAll('.quiz-step .option').forEach(opt => {
-        opt.classList.remove('selected', 'correct', 'incorrect');
-        opt.style.pointerEvents = 'auto'; // Reabilita cliques
-    });
-
-    // Voltar para a primeira pergunta
-    document.getElementById('results').classList.remove('active');
-    document.getElementById('step1').classList.add('active');
-    addOptionClickListeners(document.getElementById('step1')); // Garante que a primeira pergunta tenha listeners
-
-    // NOVO: Resetar min-height para 'auto' ao reiniciar o quiz, para que as perguntas se ajustem naturalmente
     const quizContainer = document.querySelector('.quiz-container');
     if (quizContainer) {
         quizContainer.style.minHeight = 'auto';
     }
     const tabContentQuiz = document.getElementById('quiz');
     if (tabContentQuiz) {
-        // Defina um min-height inicial adequado para as perguntas, ou 'auto' se o CSS for suficiente
-        tabContentQuiz.style.minHeight = '580px'; // Volte para a altura que funcionou para as perguntas ou 'auto'
+        tabContentQuiz.style.minHeight = 'auto';
     }
 }
 
-// Chama para a primeira pergunta carregar os listeners ao carregar a página
+function resetQuiz() {
+    currentQuestion = 1;
+    score = 0;
+
+    document.querySelectorAll('.quiz-step .option').forEach(opt => {
+        opt.classList.remove('selected', 'correct', 'incorrect');
+        opt.style.pointerEvents = 'auto';
+    });
+
+    document.getElementById('results').classList.remove('active');
+    document.getElementById('step1').classList.add('active');
+    addOptionClickListeners(document.getElementById('step1'));
+
+    const quizContainer = document.querySelector('.quiz-container');
+    if (quizContainer) {
+        quizContainer.style.minHeight = 'auto';
+    }
+    const tabContentQuiz = document.getElementById('quiz');
+    if (tabContentQuiz) {
+        tabContentQuiz.style.minHeight = '580px';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     addOptionClickListeners(document.getElementById('step1'));
 });
 
 
 // --------------------------------------------------------------------------------------
-// NOVAS FUNÇÕES PARA O SIMULADOR DE HABILIDADES E IA + MEIO AMBIENTE
+// FUNÇÕES PARA O SIMULADOR DE HABILIDADES E IA + MEIO AMBIENTE (CARDS)
 // --------------------------------------------------------------------------------------
 
 // Dados para o Simulador de Habilidades
@@ -316,13 +235,37 @@ const skillsData = {
     "adaptabilidade": {
         level: "Vital",
         description: "A capacidade de aprender e se adaptar rapidamente a novas ferramentas e tecnologias é crucial em um cenário de constantes mudanças impulsionadas pela IA."
+    },
+    "colaboração": {
+        level: "Essencial",
+        description: "A capacidade de trabalhar eficazmente em equipe, tanto com humanos quanto com sistemas de IA, será fundamental para projetos complexos e inovadores."
+    },
+    "ética em ia": {
+        level: "Emergente e Crítica",
+        description: "Com o avanço da IA, a demanda por profissionais que entendam e apliquem princípios éticos na sua concepção e uso será vital para garantir tecnologias justas e responsáveis."
+    },
+    "curiosidade": {
+        level: "Altamente Valorizada",
+        description: "A curiosidade impulsiona a exploração e o aprendizado contínuo, qualidades essenciais para se manter relevante em um mercado de trabalho em constante evolução pela IA."
+    },
+    "negociação": {
+        level: "Relevante",
+        description: "Enquanto a IA pode otimizar processos, a negociação e a persuasão em interações complexas com clientes, parceiros e equipes permanecem habilidades humanas chave."
+    },
+    "design thinking": {
+        level: "Crescente Importância",
+        description: "A abordagem de Design Thinking permite resolver problemas de forma criativa, colocando o ser humano no centro, habilidade que complementa o poder analítico da IA."
+    },
+    "interpretação de dados": {
+        level: "Crucial",
+        description: "Ir além da coleta de dados; a habilidade de interpretar resultados gerados pela IA, identificar padrões e extrair insights relevantes para tomada de decisão."
     }
 };
 
 function analyzeSkill() {
     const skillInput = document.getElementById('skill-input');
     const skillResultDiv = document.getElementById('skill-result');
-    const skillName = skillInput.value.trim().toLowerCase(); // Normaliza a entrada
+    const skillName = skillInput.value.trim().toLowerCase();
 
     let resultHtml = '';
 
@@ -343,10 +286,10 @@ function analyzeSkill() {
         `;
     }
     skillResultDiv.innerHTML = resultHtml;
-    skillResultDiv.style.display = 'block'; // Garante que o resultado seja exibido
+    skillResultDiv.style.display = 'block';
 }
 
-// Dados para "IA a Serviço do Meio Ambiente"
+// Dados para a ABA "Meio Ambiente" (environment-cards)
 const envAIData = {
     "agricultura": {
         title: "Agricultura de Precisão",
@@ -367,7 +310,7 @@ const envAIData = {
 };
 
 function displayEnvAIInfo(envType) {
-    const envAiResultDiv = document.getElementById('env-ai-result');
+    const envCardsResultDiv = document.getElementById('env-cards-result'); // ID de resultado para esta aba
     let resultHtml = '';
 
     if (envAIData[envType]) {
@@ -377,13 +320,13 @@ function displayEnvAIInfo(envType) {
             <p>${data.description}</p>
         `;
     } else {
-        resultHtml = '<p>Selecione uma área para ver os detalhes.</p>';
+        resultHtml = '<p>Clique em uma área para saber como a IA ajuda!</p>';
     }
-    envAiResultDiv.innerHTML = resultHtml;
-    envAiResultDiv.style.display = 'block';
+    envCardsResultDiv.innerHTML = resultHtml;
+    envCardsResultDiv.style.display = 'block';
 }
 
-// Adicionar listeners para os cards de IA e Meio Ambiente
+// Adicionar listeners para os cards da ABA "Meio Ambiente" (environment-cards)
 document.addEventListener('DOMContentLoaded', function() {
     const envCards = document.querySelectorAll('.env-card');
     envCards.forEach(card => {

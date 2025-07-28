@@ -37,10 +37,18 @@ header {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     color: var(--text-light);
     padding: 1rem;
-    position: sticky;
+    position: fixed; /* MUDANÇA AQUI: de sticky para fixed */
     top: 0;
+    left: 0; /* Adicionado para ocupar a largura total */
+    width: 100%; /* Adicionado para ocupar a largura total */
     z-index: 100;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: top 0.3s ease-in-out; /* Adicionado para animação suave de subida/descida */
+}
+
+/* Nova classe para esconder o header */
+.header-hidden {
+    top: -150px; /* Mova o header para cima para escondê-lo. Ajuste -100px se seu header for mais alto. */
 }
 
 .navbar {
@@ -50,7 +58,6 @@ header {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
-    /* REMOVIDO: flex-wrap daqui, mas será adicionado no media query para controle responsivo */
 }
 
 .logo {
@@ -59,18 +66,20 @@ header {
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-shrink: 0; /* Impede que a logo encolha demais */
+    flex-shrink: 0;
 }
 
 .navbar-links {
     display: flex;
     list-style: none;
-    gap: 1.5rem; /* Espaço entre os links */
+    gap: 1.5rem;
     margin: 0;
     padding: 0;
-    justify-content: flex-end; /* Alinha os links à direita por padrão */
-    /* Removido white-space: nowrap; e overflow-x: auto; daqui */
-    /* O flex-wrap será adicionado no media query para controle responsivo */
+    justify-content: flex-end;
+    white-space: nowrap; /* Mantém os links em uma única linha */
+    overflow-x: auto; /* Adiciona rolagem horizontal se não couber tudo */
+    -webkit-overflow-scrolling: touch; /* Melhor rolagem em iOS */
+    padding-bottom: 5px; /* Para a barra de rolagem não cortar texto */
 }
 
 .navbar-links a {
@@ -80,8 +89,7 @@ header {
     padding: 0.5rem;
     border-radius: 4px;
     transition: var(--transition);
-    flex-shrink: 0; /* Impede que os itens do menu encolham */
-    white-space: nowrap; /* Mantém o texto do link em uma única linha (reforço para não quebrar internamente) */
+    flex-shrink: 0;
 }
 
 .navbar-links a:hover {
@@ -415,6 +423,46 @@ input:focus, select:focus {
     background-color: rgba(67, 97, 238, 0.1); /* Um fundo levemente colorido */
 }
 
+/* Estilos para a nova aba Floresta Inteligente */
+.forest-scenario {
+    position: relative;
+    width: 100%;
+    height: 350px; /* Ajuste a altura conforme necessário para sua imagem de fundo */
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    overflow: hidden; /* Garante que os pontos não saiam da imagem */
+    margin-bottom: 1.5rem;
+}
+
+.monitor-point {
+    position: absolute;
+    width: 50px; /* Tamanho do ponto clicável */
+    height: 50px; /* Tamanho do ponto clicável */
+    background-color: rgba(255, 255, 255, 0.7); /* Fundo semi-transparente */
+    border-radius: 50%; /* Torna-o redondo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: var(--primary);
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.monitor-point:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.monitor-point.active {
+    border-color: var(--accent); /* Borda quando ativo */
+    background-color: rgba(76, 201, 240, 0.9); /* Fundo mais opaco quando ativo */
+    color: white;
+}
+
 
 .progress-bar {
     height: 8px;
@@ -496,28 +544,27 @@ footer {
 /* MEDIAS QUERIES */
 @media (max-width: 768px) {
     .navbar {
-        /* Permite que a logo e os links se adaptem */
-        flex-wrap: wrap; /* Permitir que logo e links quebrem linha SE NECESSÁRIO */
-        justify-content: center; /* Centraliza logo e links juntos */
-        gap: 0.5rem; /* Ajuste o gap entre os elementos do navbar */
-        padding: 0.5rem 1rem; /* Aumenta um pouco o padding vertical para dar mais espaço */
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
     }
 
     .navbar-links {
-        width: 100%; /* Links ocupam a largura total para distribuição */
-        justify-content: space-around; /* Distribui os links uniformemente */
-        gap: 0.2rem; /* Reduz o gap entre os links para ficarem bem compactos */
-        margin-top: 0.5rem; /* Um pouco de espaço acima dos links se eles ficarem abaixo da logo */
-        white-space: nowrap; /* Mantém os links em uma única linha, permitindo a rolagem no container pai se necessário */
-        overflow-x: auto; /* Permite rolagem horizontal se não couber tudo */
-        -webkit-overflow-scrolling: touch; /* Melhor rolagem em iOS */
-        padding-bottom: 5px; /* Para a barra de rolagem não cortar texto */
+        width: 100%;
+        justify-content: space-around;
+        gap: 0.2rem;
+        margin-top: 0.5rem;
+        white-space: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 5px;
     }
 
     .navbar-links a {
-        padding: 0.3rem 0.5rem; /* Reduz o padding dos links para ficarem ainda mais compactos */
-        font-size: 0.85rem; /* Diminui um pouco mais o tamanho da fonte, se necessário */
-        flex-shrink: 0; /* Impede que os links encolham */
+        padding: 0.3rem 0.5rem;
+        font-size: 0.85rem;
+        flex-shrink: 0;
     }
 
     .hero h1 {
@@ -536,12 +583,12 @@ footer {
         flex-wrap: wrap;
         justify-content: center;
         padding: 0 1rem;
-        gap: 0.5rem; /* Ajustado para 2 colunas */
+        gap: 0.5rem;
     }
 
     .tab-btn {
-        flex-basis: calc(50% - 0.25rem); /* Para 2 botões por linha */
-        margin-bottom: 0.5rem; /* Espaço entre as linhas de botões */
+        flex-basis: calc(50% - 0.25rem);
+        margin-bottom: 0.5rem;
         font-size: 0.9rem;
         padding: 0.6rem 1rem;
     }
@@ -557,7 +604,8 @@ footer {
 
     .quiz-step,
     #skills,
-    #environment-ai {
+    #environment-cards, /* Adicionado para a aba de cards do meio ambiente */
+    #forest-ai-monitor { /* Adicionado para a aba da floresta inteligente */
         padding: 1rem;
     }
 }
