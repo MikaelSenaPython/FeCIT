@@ -1,33 +1,28 @@
 // NOVO: Lógica para esconder/mostrar o header ao rolar com threshold no topo
-let lastScrollY = window.scrollY; // Variável para armazenar a última posição de rolagem
-const header = document.querySelector('header'); // Pega o header uma vez
-const topThreshold = 200; // Define o limiar em pixels para perto do topo
+let lastScrollY = window.scrollY;
+const header = document.querySelector('header');
+const topThreshold = 200;
 
 window.addEventListener('scroll', () => {
     const currentScrollY = window.scrollY;
 
     if (currentScrollY > lastScrollY) {
-        // Rolando para baixo: Sempre esconde se já desceu o suficiente.
         if (currentScrollY > topThreshold) {
             header.classList.add('header-hidden');
         }
     } else {
-        // Rolando para cima:
-        // A navbar só aparece se estiver perto do topo (dentro do topThreshold)
         if (currentScrollY <= topThreshold) {
             header.classList.remove('header-hidden');
         } else {
-            // Se rolando para cima, mas ainda longe do topo (fora do topThreshold), mantém escondida
             header.classList.add('header-hidden');
         }
     }
 
-    // Caso especial: Sempre mostrar se estiver exatamente no topo da página
     if (currentScrollY === 0) {
         header.classList.remove('header-hidden');
     }
 
-    lastScrollY = currentScrollY; // Atualiza a última posição de rolagem
+    lastScrollY = currentScrollY;
 });
 
 
