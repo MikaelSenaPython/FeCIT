@@ -254,6 +254,10 @@ const skillsData = {
     "interpretação de dados": {
         level: "Crucial",
         description: "Ir além da coleta de dados; a habilidade de interpretar resultados gerados pela IA, identificar padrões e extrair insights relevantes para tomada de decisão."
+    },
+    "transporte": {
+        level: "Relevância Redefinida",
+        description: "Com o avanço da IA em veículos autônomos e otimização logística, a habilidade em transporte evolui. Profissionais se focarão em gestão de frotas autônomas, manutenção de sistemas inteligentes e planejamento de redes complexas, exigindo adaptabilidade tecnológica."
     }
 };
 
