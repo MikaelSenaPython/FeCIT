@@ -67,7 +67,7 @@ tabBtns.forEach(btn => {
 
 // Quiz
 let currentQuestion = 1;
-let score = 0;
+let score = 0; // A pontuação será atualizada de forma cumulativa
 
 // Função para adicionar evento de clique às opções de uma etapa
 function addOptionClickListeners(stepElement) {
@@ -83,15 +83,10 @@ function handleOptionClick() {
     const currentStep = this.closest('.quiz-step');
     const optionsInCurrentStep = currentStep.querySelectorAll('.option');
 
-    // Remove a classe 'selected' das opções anteriores antes de aplicar a nova seleção
-    optionsInCurrentStep.forEach(opt => {
-        opt.classList.remove('selected');
-    });
-
     // Desabilitar cliques adicionais na pergunta atual
     optionsInCurrentStep.forEach(opt => {
         opt.style.pointerEvents = 'none';
-        opt.classList.remove('correct', 'incorrect');
+        opt.classList.remove('selected', 'correct', 'incorrect');
     });
 
     this.classList.add('selected');
@@ -99,16 +94,10 @@ function handleOptionClick() {
     const isCorrect = this.getAttribute('data-correct') === 'true';
     if (isCorrect) {
         this.classList.add('correct');
-    } else {
-        this.classList.add('incorrect');
-    }
-
-    // NOVO: Adiciona ou remove pontos APÓS a verificação
-    if (isCorrect) {
+        // NOVO: Aumenta a pontuação imediatamente se a resposta estiver correta
         score++;
     } else {
-        // Se a resposta anterior estava certa e a nova está errada, remove o ponto
-        // Para evitar contagem duplicada, a pontuação será feita no final
+        this.classList.add('incorrect');
     }
 
     setTimeout(() => {
@@ -143,11 +132,8 @@ function nextQuestion() {
 }
 
 function showResults() {
-    // CORRIGIDO: A pontuação final é calculada aqui, somando os acertos de todas as perguntas
-    score = 0; // Reinicia a pontuação para o cálculo final
-    const allCorrectlySelectedOptions = document.querySelectorAll('.quiz-step .option.selected[data-correct="true"]');
-    score = allCorrectlySelectedOptions.length;
-
+    // CORRIGIDO: A pontuação já foi calculada nas respostas anteriores.
+    // Apenas atualiza a UI com o valor final
     document.getElementById('score').textContent = score;
 
     let feedback = '';
@@ -180,6 +166,7 @@ function showResults() {
 }
 
 function resetQuiz() {
+    // CORRIGIDO: Reinicia a pontuação para 0 ao resetar o quiz
     currentQuestion = 1;
     score = 0;
 
