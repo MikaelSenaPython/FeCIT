@@ -1,28 +1,33 @@
 // NOVO: Lógica para esconder/mostrar o header ao rolar com threshold no topo
-let lastScrollY = window.scrollY;
-const header = document.querySelector('header');
-const topThreshold = 200;
+let lastScrollY = window.scrollY; // Variável para armazenar a última posição de rolagem
+const header = document.querySelector('header'); // Pega o header uma vez
+const topThreshold = 200; // Define o limiar em pixels para perto do topo
 
 window.addEventListener('scroll', () => {
     const currentScrollY = window.scrollY;
 
     if (currentScrollY > lastScrollY) {
+        // Rolando para baixo: Sempre esconde se já desceu o suficiente.
         if (currentScrollY > topThreshold) {
             header.classList.add('header-hidden');
         }
     } else {
+        // Rolando para cima:
+        // A navbar só aparece se estiver perto do topo (dentro do topThreshold)
         if (currentScrollY <= topThreshold) {
             header.classList.remove('header-hidden');
         } else {
+            // Se rolando para cima, mas ainda longe do topo (fora do topThreshold), mantém escondida
             header.classList.add('header-hidden');
         }
     }
 
+    // Caso especial: Sempre mostrar se estiver exatamente no topo da página
     if (currentScrollY === 0) {
         header.classList.remove('header-hidden');
     }
 
-    lastScrollY = currentScrollY;
+    lastScrollY = currentScrollY; // Atualiza a última posição de rolagem
 });
 
 
@@ -78,9 +83,15 @@ function handleOptionClick() {
     const currentStep = this.closest('.quiz-step');
     const optionsInCurrentStep = currentStep.querySelectorAll('.option');
 
+    // Remove a classe 'selected' das opções anteriores antes de aplicar a nova seleção
+    optionsInCurrentStep.forEach(opt => {
+        opt.classList.remove('selected');
+    });
+
+    // Desabilitar cliques adicionais na pergunta atual
     optionsInCurrentStep.forEach(opt => {
         opt.style.pointerEvents = 'none';
-        opt.classList.remove('selected', 'correct', 'incorrect');
+        opt.classList.remove('correct', 'incorrect');
     });
 
     this.classList.add('selected');
@@ -90,6 +101,14 @@ function handleOptionClick() {
         this.classList.add('correct');
     } else {
         this.classList.add('incorrect');
+    }
+
+    // NOVO: Adiciona ou remove pontos APÓS a verificação
+    if (isCorrect) {
+        score++;
+    } else {
+        // Se a resposta anterior estava certa e a nova está errada, remove o ponto
+        // Para evitar contagem duplicada, a pontuação será feita no final
     }
 
     setTimeout(() => {
@@ -124,15 +143,10 @@ function nextQuestion() {
 }
 
 function showResults() {
-    score = 0;
-    const allQuizSteps = document.querySelectorAll('.quiz-step');
-    allQuizSteps.forEach(step => {
-        step.querySelectorAll('.option.selected').forEach(option => {
-            if (option.getAttribute('data-correct') === 'true') {
-                score++;
-            }
-        });
-    });
+    // CORRIGIDO: A pontuação final é calculada aqui, somando os acertos de todas as perguntas
+    score = 0; // Reinicia a pontuação para o cálculo final
+    const allCorrectlySelectedOptions = document.querySelectorAll('.quiz-step .option.selected[data-correct="true"]');
+    score = allCorrectlySelectedOptions.length;
 
     document.getElementById('score').textContent = score;
 
