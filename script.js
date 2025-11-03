@@ -380,3 +380,101 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         });
     });
 });
+
+// --- LÓGICA DO JOGO DRAG & DROP: MEIO AMBIENTE ---
+
+// 1. O "Banco de Dados" com as explicações (A Recompensa)
+const envDatabase = {
+    'agricultura': {
+        title: '✅ Combinação Correta!',
+        text: 'A IA usa drones e sensores que criam um mapa de irrigação e nutrientes. Isso permite que fazendeiros usem água e fertilizante <strong>apenas</strong> onde é necessário, economizando até 30% de água.'
+    },
+    'cidades': {
+        title: '✅ Combinação Correta!',
+        text: 'A IA otimiza semáforos em tempo real para reduzir o trânsito e gerencia a energia de prédios públicos. Isso diminui a poluição e pode economizar até 15% de energia na cidade.'
+    },
+    'desastres': {
+        title: '✅ Combinação Correta!',
+        text: 'A IA analisa dados de satélites e sensores climáticos para prever eventos extremos (como furacões) e usa drones com câmeras térmicas para detectar focos de incêndio antes que se espalhem.'
+    },
+    'energia': {
+        title: '✅ Combinação Correta!',
+        text: 'As "Smart Grids" usam IA para prever picos de consumo e enviar energia de fontes renováveis (como solar e eólica) de forma mais eficiente, evitando desperdício e apagões.'
+    }
+};
+
+// 2. Seleciona todos os itens arrastáveis (Soluções) e alvos (Problemas)
+const draggables = document.querySelectorAll('.solution-card');
+const dropZones = document.querySelectorAll('.problem-card');
+
+// 3. Adiciona eventos para os itens Arrastáveis (Soluções)
+draggables.forEach(draggable => {
+    // Quando começa a arrastar
+    draggable.addEventListener('dragstart', (e) => {
+        draggable.classList.add('dragging');
+        // Salva o ID do item que está sendo arrastado
+        e.dataTransfer.setData('text/plain', draggable.id);
+    });
+
+    // Quando termina de arrastar (soltando ou não)
+    draggable.addEventListener('dragend', () => {
+        draggable.classList.remove('dragging');
+    });
+});
+
+// 4. Adiciona eventos para os Alvos (Problemas)
+dropZones.forEach(zone => {
+    // Quando um item arrastado está SOBRE o alvo
+    zone.addEventListener('dragover', (e) => {
+        e.preventDefault(); // Necessário para permitir o 'drop'
+        if (!zone.classList.contains('solved')) { // Só mostra se não estiver resolvido
+            zone.classList.add('drag-over');
+        }
+    });
+
+    // Quando o item arrastado SAI de cima do alvo
+    zone.addEventListener('dragleave', () => {
+        zone.classList.remove('drag-over');
+    });
+
+    // Quando o item é SOLTO em cima do alvo
+    zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('drag-over');
+
+        // Se o alvo já foi resolvido, não faz nada
+        if (zone.classList.contains('solved')) {
+            return;
+        }
+
+        const draggedId = e.dataTransfer.getData('text/plain');
+        const draggedElement = document.getElementById(draggedId);
+        
+        const draggedMatch = draggedElement.dataset.match;
+        const targetMatch = zone.dataset.match;
+
+        // 5. VERIFICA SE A COMBINAÇÃO ESTÁ CORRETA
+        if (draggedMatch === targetMatch) {
+            // ACERTOU!
+            const solutionData = envDatabase[targetMatch];
+            
+            // Mostra a "Ficha de Solução" (A Recompensa)
+            zone.innerHTML = `
+                <h5>${solutionData.title}</h5>
+                <p>${solutionData.text}</p>
+            `;
+            zone.classList.add('solved');
+            
+            // Esconde o card de solução que foi usado
+            draggedElement.style.display = 'none';
+
+        } else {
+            // ERROU!
+            zone.classList.add('shake');
+            // Remove a animação de "tremer" após ela terminar
+            setTimeout(() => {
+                zone.classList.remove('shake');
+            }, 500);
+        }
+    });
+});

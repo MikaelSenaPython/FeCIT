@@ -682,3 +682,100 @@ footer {
     background-color: rgba(247, 37, 133, 0.2); /* Cor --warning */
     color: var(--warning);
 }
+
+/* Contêiner principal do Jogo Drag & Drop */
+.drag-drop-game {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.drop-zone h4, .drag-zone h4 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+/* Coluna da Esquerda (Problemas / Alvos) */
+.problem-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.problem-card {
+    background: #f0f4f8;
+    border: 2px dashed #b0c4de;
+    border-radius: 8px;
+    padding: 1.5rem 1rem;
+    transition: var(--transition);
+    min-height: 80px;
+}
+
+.problem-card i {
+    margin-right: 10px;
+    color: var(--warning);
+}
+
+/* Coluna da Direita (Soluções / Arrastáveis) */
+.solution-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.solution-card {
+    background: white;
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.5rem 1rem;
+    cursor: grab;
+    transition: var(--transition);
+    min-height: 80px;
+}
+
+.solution-card i {
+    margin-right: 10px;
+    color: var(--accent);
+}
+
+/* --- ESTADOS VISUAIS DO JOGO --- */
+
+/* 1. Quando uma solução está sendo arrastada */
+.solution-card.dragging {
+    opacity: 0.4;
+    cursor: grabbing;
+}
+
+/* 2. Quando uma solução está sobre um problema (alvo) */
+.problem-card.drag-over {
+    background: #dff0d8; /* Verde claro */
+    border-style: solid;
+    border-color: #5cb85c; /* Verde */
+}
+
+/* 3. Quando o "Problema" é resolvido (Acerto) */
+.problem-card.solved {
+    background: #e6ffed;
+    border: 2px solid #4CAF50;
+    border-style: solid;
+    opacity: 1;
+}
+
+.problem-card.solved h5 {
+    color: #08a045;
+    font-size: 1.1rem;
+}
+
+/* 4. Animação de Erro (Treme) */
+.problem-card.shake {
+    animation: shake 0.5s ease-in-out;
+    border-color: var(--warning);
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-10px); }
+    40%, 80% { transform: translateX(10px); }
+}

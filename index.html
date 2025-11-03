@@ -221,28 +221,50 @@
             </div>
 
             <div id="environment-cards" class="tab-content">
-                <h3>IA a Serviço do Meio Ambiente</h3>
-                <p>Explore como a Inteligência Artificial pode ser uma aliada poderosa na sustentabilidade.</p>
-                <div class="cards" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-                    <div class="card env-card" data-env-type="agricultura">
-                        <h4>Agricultura de Precisão</h4>
-                        <p>Otimização do uso de água e fertilizantes, monitoramento de pragas e doenças.</p>
+                <h3>O Jogo da Solução: Meio Ambiente</h3>
+                <p>Arraste a "Solução de IA" (da direita) e solte sobre o "Problema" (da esquerda) que ela resolve!</p>
+
+                <div class="drag-drop-game">
+                    
+                    <div id="problem-container" class="drop-zone">
+                        <h4>Problemas Ambientais</h4>
+                        <div class="problem-card" id="prob-agricultura" data-match="agricultura">
+                            <i class="fas fa-tint-slash"></i>
+                            <strong>Problema:</strong> Gasto excessivo de água na agricultura e uso de pesticidas.
+                        </div>
+                        <div class="problem-card" id="prob-cidades" data-match="cidades">
+                            <i class="fas fa-traffic-light"></i>
+                            <strong>Problema:</strong> Trânsito caótico, poluição e alto consumo de energia nas cidades.
+                        </div>
+                        <div class="problem-card" id="prob-desastres" data-match="desastres">
+                            <i class="fas fa-fire"></i>
+                            <strong>Problema:</strong> Dificuldade em prever desastres naturais e monitorar incêndios florestais.
+                        </div>
+                        <div class="problem-card" id="prob-energia" data-match="energia">
+                            <i class="fas fa-plug"></i>
+                            <strong>Problema:</strong> Desperdício de eletricidade e dificuldade em gerenciar fontes de energia renováveis.
+                        </div>
                     </div>
-                    <div class="card env-card" data-env-type="cidades">
-                        <h4>Cidades Inteligentes</h4>
-                        <p>Gestão de tráfego, otimização de energia em edifícios, coleta de lixo inteligente.</p>
+                    
+                    <div id="solution-container" class="drag-zone">
+                        <h4>Soluções de IA (Arraste-me)</h4>
+                        <div class="solution-card" id="sol-desastres" data-match="desastres" draggable="true">
+                            <i class="fas fa-satellite"></i>
+                            <strong>Solução:</strong> Análise de imagens de satélite e sensores climáticos em tempo real.
+                        </div>
+                        <div class="solution-card" id="sol-energia" data-match="energia" draggable="true">
+                            <i class="fas fa-chart-line"></i>
+                            <strong>Solução:</strong> "Redes Inteligentes" (Smart Grids) que prevêem a demanda e evitam desperdício.
+                        </div>
+                        <div class="solution-card" id="sol-agricultura" data-match="agricultura" draggable="true">
+                            <i class="fas fa-tractor"></i>
+                            <strong>Solução:</strong> Drones e sensores que aplicam água/fertilizante apenas onde é necessário.
+                        </div>
+                        <div class="solution-card" id="sol-cidades" data-match="cidades" draggable="true">
+                            <i class="fas fa-car-side"></i>
+                            <strong>Solução:</strong> Otimização de semáforos e gerenciamento de energia de prédios públicos.
+                        </div>
                     </div>
-                    <div class="card env-card" data-env-type="desastres">
-                        <h4>Prevenção de Desastres</h4>
-                        <p>Previsão de eventos climáticos extremos, monitoramento de florestas e incêndios.</p>
-                    </div>
-                    <div class="card env-card" data-env-type="energia">
-                        <h4>Energias Renováveis</h4>
-                        <p>Otimização da produção e distribuição de energia solar e eólica.</p>
-                    </div>
-                </div>
-                <div id="env-cards-result" class="result" style="display: block; margin-top: 1.5rem; text-align: left;">
-                    <p>Clique em uma área para saber como a IA ajuda!</p>
                 </div>
             </div>
 
