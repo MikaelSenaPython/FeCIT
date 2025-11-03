@@ -135,7 +135,9 @@
                 <button class="tab-btn" data-tab="environment-cards">Meio Ambiente</button> 
             </div>
 
-            <div id="quiz" class="tab-content active"> <div class="quiz-container">
+            <div id="quiz" class="tab-content active">
+                <div class="quiz-container">
+
                     <div class="quiz-step active" id="step1">
                         <div class="question">1. Qual destas áreas NÃO é um benefício significativo da IA para o meio ambiente?</div>
                         <div class="options">
@@ -144,7 +146,7 @@
                             <div class="option" data-correct="true">Redução do lixo eletrônico</div>
                             <div class="option" data-correct="false">Agricultura de precisão</div>
                         </div>
-                    </div>
+                        </div>
 
                     <div class="quiz-step" id="step2">
                         <div class="question">2. Qual porcentagem de tarefas administrativas pode ser automatizada por IA?</div>
@@ -154,24 +156,35 @@
                             <div class="option" data-correct="false">60-80%</div>
                             <div class="option" data-correct="false">Mais de 80%</div>
                         </div>
-                    </div>
+                        </div>
 
                     <div class="quiz-step" id="step3">
-                        <div class="question">3. Qual destas habilidades será MAIS valorizada na era da IA?</div>
+                        <div class="question">3. Qual tipo de trabalho é **mais difícil** de ser automatizado pela IA?</div>
+                        <div class="options">
+                            <div class="option" data-correct="false">Tarefas de entrada de dados e arquivamento.</div>
+                            <div class="option" data-correct="true">Empregos que exigem alta criatividade e inteligência emocional.</div>
+                            <div class="option" data-correct="false">Funções de linha de montagem repetitivas.</div>
+                            <div class="option" data-correct="false">Atendimento ao cliente baseado em roteiro.</div>
+                        </div>
+                        </div>
+
+                    <div class="quiz-step" id="step4">
+                        <div class="question">4. Qual destas habilidades será MAIS valorizada na era da IA?</div>
                         <div class="options">
                             <div class="option" data-correct="false">Digitação rápida</div>
                             <div class="option" data-correct="false">Cálculo manual</div>
                             <div class="option" data-correct="true">Pensamento crítico</div>
                             <div class="option" data-correct="false">Memorização de informações</div>
                         </div>
-                    </div>
+                        </div>
 
                     <div class="quiz-step" id="results">
                         <h3>Resultado do Quiz</h3>
-                        <p>Você acertou <span id="score">0</span> de 3 perguntas!</p>
+                        <p>Você acertou <span id="score">0</span> de 4 perguntas!</p>
                         <div id="quizFeedback"></div>
                         <button class="btn" onclick="resetQuiz()">Tentar Novamente</button>
                     </div>
+
                 </div>
             </div>
 

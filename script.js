@@ -64,130 +64,125 @@ tabBtns.forEach(btn => {
         }
     });
 });
+// --- INÍCIO DO CÓDIGO DO QUIZ (COPIE E SUBSTITUA NO SEU SCRIPT.JS) ---
 
-// Quiz
 let currentQuestion = 1;
-let score = 0; // A pontuação será atualizada de forma cumulativa
+let score = 0;
+// Seleciona especificamente as opções dentro do contêiner do quiz
+const options = document.querySelectorAll('#quiz .option');
 
-// Função para adicionar evento de clique às opções de uma etapa
-function addOptionClickListeners(stepElement) {
-    const options = stepElement.querySelectorAll('.option');
-    options.forEach(option => {
-        option.removeEventListener('click', handleOptionClick);
-        option.addEventListener('click', handleOptionClick);
-    });
-}
+// Adiciona o clique para TODAS as opções do quiz
+options.forEach(option => {
+    option.addEventListener('click', function() {
+        
+        // Impede cliques múltiplos enquanto a transição ocorre
+        const parentOptions = this.parentElement;
+        parentOptions.querySelectorAll('.option').forEach(opt => opt.style.pointerEvents = 'none');
 
-// Handler para o clique em uma opção do quiz
-function handleOptionClick() {
-    const currentStep = this.closest('.quiz-step');
-    const optionsInCurrentStep = currentStep.querySelectorAll('.option');
-
-    // Desabilitar cliques adicionais na pergunta atual
-    optionsInCurrentStep.forEach(opt => {
-        opt.style.pointerEvents = 'none';
-        opt.classList.remove('selected', 'correct', 'incorrect');
-    });
-
-    this.classList.add('selected');
-
-    const isCorrect = this.getAttribute('data-correct') === 'true';
-    if (isCorrect) {
-        this.classList.add('correct');
-        // NOVO: Aumenta a pontuação imediatamente se a resposta estiver correta
-        score++;
-    } else {
-        this.classList.add('incorrect');
-    }
-
-    setTimeout(() => {
-        optionsInCurrentStep.forEach(opt => opt.style.pointerEvents = 'auto');
-
-        if (currentQuestion === 3) {
-            showResults();
-        } else {
-            nextQuestion();
-        }
-    }, 1500);
-}
-
-function nextQuestion() {
-    const currentStepElement = document.getElementById('step' + currentQuestion);
-    if (currentStepElement) {
-        currentStepElement.classList.remove('active');
-        currentStepElement.querySelectorAll('.option').forEach(opt => {
-            opt.classList.remove('selected', 'correct', 'incorrect');
+        // 1. Remove a seleção de 'irmãos'
+        parentOptions.querySelectorAll('.option').forEach(opt => {
+            opt.classList.remove('selected');
         });
-    }
+        
+        // 2. Adiciona a classe 'selected' e de feedback (certo/errado)
+        this.classList.add('selected');
+        const isCorrect = this.getAttribute('data-correct') === 'true';
+        if (isCorrect) {
+            this.classList.add('correct');
+        } else {
+            this.classList.add('incorrect');
+        }
 
+        // 3. Descobre em qual passo estamos
+        const currentStepElement = this.closest('.quiz-step');
+        const currentStepId = currentStepElement.id; // ex: "step3"
+
+        // 4. LÓGICA DE AVANÇO AUTOMÁTICO
+        // Espera 800ms (0.8 segundos) para o usuário ver o feedback
+        setTimeout(() => {
+            if (currentStepId === 'step4') {
+                // Se for a última pergunta (step4), mostra os resultados
+                showResults();
+            } else {
+                // Se não, apenas avança para a próxima
+                nextQuestion();
+            }
+            
+            // Reabilita os cliques nas opções do próximo passo (se houver)
+            parentOptions.querySelectorAll('.option').forEach(opt => opt.style.pointerEvents = 'auto');
+
+        }, 800); 
+    });
+});
+
+// Função para avançar para a próxima pergunta
+function nextQuestion() {
+    // Esconde a pergunta atual
+    document.getElementById('step' + currentQuestion).classList.remove('active');
+    // Incrementa o contador
     currentQuestion++;
-    const nextStepElement = document.getElementById('step' + currentQuestion);
-
-    if (nextStepElement) {
-        nextStepElement.classList.add('active');
-        addOptionClickListeners(nextStepElement);
-    } else {
-        showResults();
-    }
+    // Mostra a próxima pergunta
+    document.getElementById('step' + currentQuestion).classList.add('active');
 }
 
+// Função para mostrar os resultados (chamada SÓ na última pergunta)
 function showResults() {
-    // CORRIGIDO: A pontuação já foi calculada nas respostas anteriores.
-    // Apenas atualiza a UI com o valor final
+    // Calcular pontuação
+    score = 0;
+    const selectedOptions = document.querySelectorAll('#quiz .option.selected');
+    
+    selectedOptions.forEach(option => {
+        if (option.getAttribute('data-correct') === 'true') {
+            score++;
+        }
+    });
+    
+    // Atualiza o placar na tela
     document.getElementById('score').textContent = score;
-
+    
+    // Feedback baseado na pontuação (para 4 perguntas)
     let feedback = '';
-    if (score === 3) {
-        feedback = '<p>Parabéns! Você domina os conceitos fundamentais sobre IA.</p>';
+    if (score === 4) {
+        feedback = '<p>Parabéns! Você domina os conceitos fundamentais e o futuro do trabalho com IA.</p>';
+    } else if (score === 3) {
+        feedback = '<p>Ótimo resultado! Você tem um bom entendimento sobre IA e suas implicações profissionais.</p>';
     } else if (score === 2) {
-        feedback = '<p>Bom trabalho! Você tem um bom entendimento sobre IA.</p>';
+        feedback = '<p>Bom trabalho! Você está no caminho certo para entender a Revolução da IA.</p>';
     } else if (score === 1) {
-        feedback = '<p>Você está no caminho certo, mas pode aprender mais sobre IA.</p>';
+        feedback = '<p>Você está começando bem! Continue explorando o impacto da IA nas carreiras.</p>';
     } else {
-        feedback = '<p>Continue explorando para entender melhor o impacto da IA.</p>';
+        feedback = '<p>Continue explorando o site para dominar o futuro da Inteligência Artificial!</p>';
     }
-
+    
     document.getElementById('quizFeedback').innerHTML = feedback;
-
-    const lastQuestionElement = document.getElementById('step' + (currentQuestion));
-    if (lastQuestionElement) {
-        lastQuestionElement.classList.remove('active');
-    }
+    
+    // Esconde a última pergunta e mostra os resultados
+    document.getElementById('step' + currentQuestion).classList.remove('active');
     document.getElementById('results').classList.add('active');
-
-    const quizContainer = document.querySelector('.quiz-container');
-    if (quizContainer) {
-        quizContainer.style.minHeight = 'auto';
-    }
-    const tabContentQuiz = document.getElementById('quiz');
-    if (tabContentQuiz) {
-        tabContentQuiz.style.minHeight = 'auto';
-    }
 }
 
+// Função para reiniciar o quiz
 function resetQuiz() {
-    // CORRIGIDO: Reinicia a pontuação para 0 ao resetar o quiz
+    // Resetar estado
     currentQuestion = 1;
     score = 0;
-
-    document.querySelectorAll('.quiz-step .option').forEach(opt => {
+    
+    // Limpar seleções e cores
+    document.querySelectorAll('#quiz .option').forEach(opt => {
         opt.classList.remove('selected', 'correct', 'incorrect');
-        opt.style.pointerEvents = 'auto';
+        opt.style.pointerEvents = 'auto'; // Garante que os cliques voltem a funcionar
     });
-
-    document.getElementById('results').classList.remove('active');
+    
+    // Esconder todos os passos
+    document.querySelectorAll('#quiz .quiz-step').forEach(step => {
+        step.classList.remove('active');
+    });
+    
+    // Voltar para primeira pergunta
     document.getElementById('step1').classList.add('active');
-    addOptionClickListeners(document.getElementById('step1'));
-
-    const quizContainer = document.querySelector('.quiz-container');
-    if (quizContainer) {
-        quizContainer.style.minHeight = 'auto';
-    }
-    const tabContentQuiz = document.getElementById('quiz');
-    if (tabContentQuiz) {
-        tabContentQuiz.style.minHeight = '580px';
-    }
 }
+
+// --- FIM DO CÓDIGO DO QUIZ ---
 
 document.addEventListener('DOMContentLoaded', () => {
     addOptionClickListeners(document.getElementById('step1'));
