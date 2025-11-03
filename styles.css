@@ -605,3 +605,80 @@ footer {
         padding: 1rem;
     }
 }
+
+/* Contêiner para os botões de habilidades */
+.skill-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+/* Estilo para cada botão de habilidade */
+.btn-skill {
+    background-color: white;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    padding: 0.8rem 1.2rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-skill:hover {
+    background-color: var(--primary);
+    color: white;
+    transform: translateY(-3px);
+}
+
+.btn-skill i {
+    color: var(--accent);
+    transition: var(--transition);
+}
+
+.btn-skill:hover i {
+    color: white;
+}
+
+/* Estilo para o resultado da habilidade */
+#skill-result {
+    background-color: #f0f4f8; 
+    border-left: 5px solid var(--accent);
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+#skill-result h4 {
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+#skill-result .skill-badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 1rem;
+}
+
+#skill-result .badge-alta {
+    background-color: rgba(76, 201, 240, 0.2); /* Cor --success */
+    color: var(--success);
+}
+
+#skill-result .badge-media {
+    background-color: rgba(255, 193, 7, 0.2); /* Um Amarelo */
+    color: #ffc107;
+}
+
+#skill-result .badge-baixa {
+    background-color: rgba(247, 37, 133, 0.2); /* Cor --warning */
+    color: var(--warning);
+}

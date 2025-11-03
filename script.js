@@ -257,31 +257,67 @@ const skillsData = {
     }
 };
 
-function analyzeSkill() {
-    const skillInput = document.getElementById('skill-input');
-    const skillResultDiv = document.getElementById('skill-result');
-    const skillName = skillInput.value.trim().toLowerCase();
-
-    let resultHtml = '';
-
-    if (skillsData[skillName]) {
-        const data = skillsData[skillName];
-        resultHtml = `
-            <h4>Habilidade: ${skillName.charAt(0).toUpperCase() + skillName.slice(1)}</h4>
-            <p><strong>Nível de Valorização na Era da IA:</strong> ${data.level}</p>
-            <p>${data.description}</p>
-        `;
-    } else if (skillName === "") {
-        resultHtml = '<p>Por favor, digite uma habilidade para analisar.</p>';
+// "Banco de dados" de habilidades
+const skillDatabase = {
+    'criatividade': {
+        title: 'Criatividade',
+        demand: 'Alta Demanda',
+        badge: 'badge-alta',
+        text: 'Essencial! A IA é uma ferramenta para executar tarefas. A criatividade humana é necessária para fazer as perguntas certas, criar novos conceitos e inovar.'
+    },
+    'critico': {
+        title: 'Pensamento Crítico',
+        demand: 'Alta Demanda',
+        badge: 'badge-alta',
+        text: 'Fundamental. Precisamos de humanos para analisar os resultados que a IA gera, questionar suas conclusões e tomar decisões éticas e estratégicas.'
+    },
+    'emocional': {
+        title: 'Inteligência Emocional',
+        demand: 'Alta Demanda',
+        badge: 'badge-alta',
+        text: 'Insubstituível. Habilidades como empatia, liderança e colaboração são puramente humanas. A IA não consegue gerenciar equipes ou se conectar com um cliente.'
+    },
+    'programacao': {
+        title: 'Programação',
+        demand: 'Média/Alta Demanda',
+        badge: 'badge-media',
+        text: 'Em transformação. A IA pode escrever códigos básicos, mas engenheiros de software ainda são vitais para projetar sistemas complexos e gerenciar a IA.'
+    },
+    'comunicacao': {
+        title: 'Comunicação',
+        demand: 'Alta Demanda',
+        badge: 'badge-alta',
+        text: 'Mais importante do que nunca. Saber explicar ideias complexas (como as da IA) para colegas, clientes e para o público será uma habilidade-chave.'
+    },
+    'etica': {
+        title: 'Ética em IA',
+        demand: 'Alta Demanda',
+        badge: 'badge-alta',
+        text: 'Uma nova área em crescimento. Profissionais que garantem que a IA seja justa e transparente são essenciais para o futuro da tecnologia.'
+    },
+    'repetitivo': {
+        title: 'Trabalho Repetitivo',
+        demand: 'Baixa Demanda',
+        badge: 'badge-baixa',
+        text: 'Em risco. Tarefas manuais ou de escritório que são repetitivas e baseadas em regras (como entrada de dados) são as mais fáceis de serem automatizadas pela IA.'
     }
-    else {
-        resultHtml = `
-            <p>Não encontramos informações específicas para "${skillName}".</p>
-            <p>Considere que habilidades como <strong>Pensamento Crítico</strong>, <strong>Criatividade</strong> e <strong>Inteligência Emocional</strong> são universalmente valorizadas, complementando as capacidades da IA.</p>
+};
+
+// Nova função que recebe o nome da habilidade (do botão)
+function analyzeSkill(skillName) {
+    const skillData = skillDatabase[skillName];
+    const resultDiv = document.getElementById('skill-result');
+    
+    if (skillData) {
+        // Formata o HTML com os dados da habilidade
+        resultDiv.innerHTML = `
+            <h4>${skillData.title}</h4>
+            <p>${skillData.text}</p>
+            <span class="skill-badge ${skillData.badge}">${skillData.demand}</span>
         `;
+        // Mostra a caixa de resultado
+        resultDiv.style.display = 'block';
     }
-    skillResultDiv.innerHTML = resultHtml;
-    skillResultDiv.style.display = 'block';
 }
 
 // Dados para a ABA "Meio Ambiente" (environment-cards)
