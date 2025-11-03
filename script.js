@@ -386,19 +386,19 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // 1. O "Banco de Dados" com as explicações (A Recompensa)
 const envDatabase = {
     'agricultura': {
-        title: '✅ Combinação Correta!',
+        title: '✅ Solução: Agricultura de Precisão',
         text: 'A IA usa drones e sensores que criam um mapa de irrigação e nutrientes. Isso permite que fazendeiros usem água e fertilizante <strong>apenas</strong> onde é necessário, economizando até 30% de água.'
     },
     'cidades': {
-        title: '✅ Combinação Correta!',
+        title: '✅ Solução: Cidades Inteligentes',
         text: 'A IA otimiza semáforos em tempo real para reduzir o trânsito e gerencia a energia de prédios públicos. Isso diminui a poluição e pode economizar até 15% de energia na cidade.'
     },
     'desastres': {
-        title: '✅ Combinação Correta!',
+        title: '✅ Solução: Prevenção de Desastres',
         text: 'A IA analisa dados de satélites e sensores climáticos para prever eventos extremos (como furacões) e usa drones com câmeras térmicas para detectar focos de incêndio antes que se espalhem.'
     },
     'energia': {
-        title: '✅ Combinação Correta!',
+        title: '✅ Solução: Redes Inteligentes (Smart Grids)',
         text: 'As "Smart Grids" usam IA para prever picos de consumo e enviar energia de fontes renováveis (como solar e eólica) de forma mais eficiente, evitando desperdício e apagões.'
     }
 };
@@ -409,14 +409,11 @@ const dropZones = document.querySelectorAll('.problem-card');
 
 // 3. Adiciona eventos para os itens Arrastáveis (Soluções)
 draggables.forEach(draggable => {
-    // Quando começa a arrastar
     draggable.addEventListener('dragstart', (e) => {
         draggable.classList.add('dragging');
-        // Salva o ID do item que está sendo arrastado
         e.dataTransfer.setData('text/plain', draggable.id);
     });
 
-    // Quando termina de arrastar (soltando ou não)
     draggable.addEventListener('dragend', () => {
         draggable.classList.remove('dragging');
     });
@@ -424,15 +421,13 @@ draggables.forEach(draggable => {
 
 // 4. Adiciona eventos para os Alvos (Problemas)
 dropZones.forEach(zone => {
-    // Quando um item arrastado está SOBRE o alvo
     zone.addEventListener('dragover', (e) => {
-        e.preventDefault(); // Necessário para permitir o 'drop'
-        if (!zone.classList.contains('solved')) { // Só mostra se não estiver resolvido
+        e.preventDefault(); 
+        if (!zone.classList.contains('solved')) {
             zone.classList.add('drag-over');
         }
     });
 
-    // Quando o item arrastado SAI de cima do alvo
     zone.addEventListener('dragleave', () => {
         zone.classList.remove('drag-over');
     });
@@ -442,7 +437,6 @@ dropZones.forEach(zone => {
         e.preventDefault();
         zone.classList.remove('drag-over');
 
-        // Se o alvo já foi resolvido, não faz nada
         if (zone.classList.contains('solved')) {
             return;
         }
@@ -457,24 +451,41 @@ dropZones.forEach(zone => {
         if (draggedMatch === targetMatch) {
             // ACERTOU!
             const solutionData = envDatabase[targetMatch];
-            
-            // Mostra a "Ficha de Solução" (A Recompensa)
-            zone.innerHTML = `
+            const feedbackBox = document.getElementById('env-game-feedback');
+
+            // !! MUDANÇA PRINCIPAL !!
+            // Atualiza a CAIXA DE FEEDBACK, não o card do problema.
+            feedbackBox.innerHTML = `
                 <h5>${solutionData.title}</h5>
                 <p>${solutionData.text}</p>
             `;
+            feedbackBox.style.display = 'block';
+
+            // Apenas marca o card do problema como 'resolvido' (muda a cor)
+            // ELE NÃO MUDA MAIS DE TAMANHO
             zone.classList.add('solved');
             
             // Esconde o card de solução que foi usado
             draggedElement.style.display = 'none';
 
+            // Verifica se o jogo terminou
+            checkGameCompletion();
+
         } else {
             // ERROU!
             zone.classList.add('shake');
-            // Remove a animação de "tremer" após ela terminar
             setTimeout(() => {
                 zone.classList.remove('shake');
             }, 500);
         }
     });
 });
+
+// 6. NOVA FUNÇÃO para verificar se o jogo acabou
+function checkGameCompletion() {
+    const solvedCount = document.querySelectorAll('.problem-card.solved').length;
+    if (solvedCount === 4) { // 4 é o número total de problemas
+        const feedbackBox = document.getElementById('env-game-feedback');
+        feedbackBox.innerHTML += '<h4 class="game-complete" style="margin-top: 1.5rem;">Parabéns, você resolveu todos os desafios!</h4>';
+    }
+}
