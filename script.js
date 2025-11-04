@@ -381,8 +381,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// --- LÓGICA DO JOGO DRAG & DROP: MEIO AMBIENTE ---
-
 // 1. O "Banco de Dados" com as explicações (A Recompensa)
 const envDatabase = {
     'agricultura': {
@@ -452,17 +450,32 @@ dropZones.forEach(zone => {
             // ACERTOU!
             const solutionData = envDatabase[targetMatch];
             const feedbackBox = document.getElementById('env-game-feedback');
+            const cardContainer = document.getElementById('env-card-container');
+            
+            // Pega o HTML original do card de problema (Ex: "Problema: Gasto excessivo...")
+            const problemHTML = zone.innerHTML; 
+
+            // Mostra o "Mural de Descobertas" (se estiver escondido)
+            feedbackBox.style.display = 'block';
 
             // !! MUDANÇA PRINCIPAL !!
-            // Atualiza a CAIXA DE FEEDBACK, não o card do problema.
-            feedbackBox.innerHTML = `
+            // Cria um NOVO card de feedback
+            const newCard = document.createElement('div');
+            newCard.classList.add('solution-feedback-card');
+            
+            // Adiciona AMBOS (Problema e Solução) ao novo card
+            newCard.innerHTML = `
+                <div class="feedback-problem-part">
+                    ${problemHTML} 
+                </div>
+                <hr class="feedback-divider">
                 <h5>${solutionData.title}</h5>
                 <p>${solutionData.text}</p>
             `;
-            feedbackBox.style.display = 'block';
+            // Adiciona o novo card ao mural
+            cardContainer.appendChild(newCard);
 
-            // Apenas marca o card do problema como 'resolvido' (muda a cor)
-            // ELE NÃO MUDA MAIS DE TAMANHO
+            // Marca o card do problema como 'resolvido' (muda a cor)
             zone.classList.add('solved');
             
             // Esconde o card de solução que foi usado
@@ -481,11 +494,10 @@ dropZones.forEach(zone => {
     });
 });
 
-// 6. NOVA FUNÇÃO para verificar se o jogo acabou
+// 6. FUNÇÃO para verificar se o jogo acabou
 function checkGameCompletion() {
     const solvedCount = document.querySelectorAll('.problem-card.solved').length;
     if (solvedCount === 4) { // 4 é o número total de problemas
-        const feedbackBox = document.getElementById('env-game-feedback');
-        feedbackBox.innerHTML += '<h4 class="game-complete" style="margin-top: 1.5rem;">Parabéns, você resolveu todos os desafios!</h4>';
+        document.getElementById('env-game-complete').style.display = 'block';
     }
 }
